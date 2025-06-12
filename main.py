@@ -11,6 +11,12 @@ class QuestionRequest(BaseModel):
     question: str
     model: str = "gpt-4o"
 
+
+@app.get("/")
+def root():
+    return {"message": "Hello Virtual TA"}
+
+
 @app.post("/api")
 async def answer_question(request: Request):
     data = await request.json()
