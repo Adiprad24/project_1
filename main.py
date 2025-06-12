@@ -5,7 +5,7 @@ import base64
 
 app = FastAPI()
 
-openai.api_key = "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"  # Get from https://platform.openai.com/account/api-keys
+openai.api_key = "OPENAI_API_KEY"  # Get from https://platform.openai.com/account/api-keys
 
 class QuestionRequest(BaseModel):
     question: str
