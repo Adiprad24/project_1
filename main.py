@@ -2,10 +2,11 @@ from fastapi import FastAPI, UploadFile, File, Request
 from pydantic import BaseModel
 import openai
 import base64
+import os
 
 app = FastAPI()
 
-openai.api_key = "OPENAI_API_KEY"  # Get from https://platform.openai.com/account/api-keys
+openai.api_key = os.getenv("OPENAI_API_KEY")  # Get from https://platform.openai.com/account/api-keys
 
 class QuestionRequest(BaseModel):
     question: str
