@@ -24,9 +24,6 @@ class QuestionRequest(BaseModel):
     model: str = "gpt-4o"
 
 
-@app.get("/")
-def root():
-    return {"message": "Hello Virtual TA"}
 
 
 @app.post("/api")
