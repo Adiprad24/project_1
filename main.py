@@ -15,7 +15,7 @@ app.add_middleware(
 )
 
 
-app = FastAPI()
+
 
 openai.api_key = os.getenv("OPENAI_API_KEY")  # Get from https://platform.openai.com/account/api-keys
 
