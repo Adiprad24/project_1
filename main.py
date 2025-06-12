@@ -27,10 +27,10 @@ class QuestionRequest(BaseModel):
 
 
 @app.post("/api")
-async def answer_question(request: Request):
-    data = await request.json()
-    question = data.get("question")
-    model = data.get("model", "gpt-4o")
+async def answer_question(request: QuestionRequest):
+    question = request.question
+    model = request.model
+
 
     response = openai.ChatCompletion.create(
         model=model,
