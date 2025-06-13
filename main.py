@@ -3,33 +3,30 @@ from pydantic import BaseModel
 import os
 from openai import OpenAI, APIConnectionError, AuthenticationError, RateLimitError, OpenAIError
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
 
-# Initialize FastAPI
+load_dotenv()  # Loads variables from .env
+
 app = FastAPI()
 
-# CORS setup
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Replace with frontend domain in production
+    allow_origins=["*"],  # Replace with frontend URL in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Get API key
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise RuntimeError("OPENAI_API_KEY not set in environment.")
 
-# Init OpenAI Client
 client = OpenAI(api_key=api_key)
 
-# Request schema
 class QuestionRequest(BaseModel):
     question: str
     model: str = "gpt-4o"
 
-# POST endpoint
 @app.post("/api")
 async def answer_question(data: QuestionRequest):
     try:
@@ -52,4 +49,3 @@ async def answer_question(data: QuestionRequest):
         raise HTTPException(status_code=500, detail=f"OpenAI API error: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
-
