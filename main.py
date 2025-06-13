@@ -1,44 +1,47 @@
-from fastapi import FastAPI, UploadFile, File, Request
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import openai
-import base64
 import os
 from fastapi.middleware.cors import CORSMiddleware
+
+# Initialize FastAPI app
 app = FastAPI()
 
+# Set OpenAI API Key
+openai.api_key = os.getenv("OPENAI_API_KEY")  # Make sure this is set in your environment
+
+# Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # You can restrict this to your frontend URL
+    allow_origins=["*"],  # Replace with your frontend URL in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-
-
-
-openai.api_key = os.getenv("OPENAI_API_KEY")  # Get from https://platform.openai.com/account/api-keys
-
+# Request schema
 class QuestionRequest(BaseModel):
     question: str
     model: str = "gpt-4o"
 
-
-
-
+# POST route
 @app.post("/api")
-async def answer_question(request: QuestionRequest):
-    question = request.question
-    model = request.model
+async def answer_question(data: QuestionRequest):
+    try:
+        response = openai.ChatCompletion.create(
+            model=data.model,
+            messages=[
+                {"role": "system", "content": "You are a helpful teaching assistant."},
+                {"role": "user", "content": data.question}
+            ]
+        )
+        return {"answer": response["choices"][0]["message"]["content"]}
 
+    except openai.error.AuthenticationError:
+        raise HTTPException(status_code=401, detail="Invalid or expired OpenAI API key.")
 
-    response = openai.ChatCompletion.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": "You are a helpful teaching assistant."},
-            {"role": "user", "content": question}
-        ]
-    )
-    return {
-        "answer": response["choices"][0]["message"]["content"]
-    }
+    except openai.error.RateLimitError:
+        raise HTTPException(status_code=429, detail="Quota exceeded or too many requests.")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
