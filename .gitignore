@@ -1,8 +1,32 @@
+# Byte-compiled / optimized / DLL files
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
+
+# Virtual environments
 env/
 venv/
 ENV/
-.VSCodeCounter/
+.venv/
+
+# VS Code
+.vscode/
+
+# Environment variables
+.env
+
+# Mac OS files
+.DS_Store
+
+# Pytest cache
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# Local dev artifacts
+*.sqlite3
+*.db
